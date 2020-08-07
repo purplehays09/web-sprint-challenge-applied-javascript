@@ -26,24 +26,71 @@ const { default: Axios } = require("axios");
 const cardContainter = document.querySelector('.cards-container')
 
 
-Axios.get('https://lambda-times-api.herokuapp.com/articles')
+
+const tabsDiv = document.querySelector('.tabs .topics')
+axios.get('https://lambda-times-api.herokuapp.com/topics')
     .then(response => {
-        const articlesObj = response.data.articles
-        // const bootstrap = articlesObj.bootstrap
-    
-        for(let subject in articlesObj){
-            console.log(subject)
-            console.log(articlesObj)
-            console.log(articlesObj[subject])
-            articlesObj[subject].forEach(article => {
-                console.log(article)
-                cardContainter.appendChild(cardMaker(article))
-            });
-        }
-        // const newDiv = cardMaker(bootstrap[0])
-        // cardContainter.appendChild(newDiv)
+        
+        response.data.topics.unshift('All')
+        response.data.topics.forEach(topic => {
+            tabsDiv.appendChild(topicMaker(topic))
+        })
     })
-    .catch(error => console.log(error))
+    .catch(error => {
+        console.log(error)
+    })
+
+function topicMaker(title){
+    const tab = document.createElement('div')
+
+    tab.classList.add('tab')
+
+    tab.textContent = title
+
+    tab.addEventListener('click', event => {
+        cardContainter.innerHTML = '';
+        if(tab.textContent === "All"){
+            Axios.get('https://lambda-times-api.herokuapp.com/articles')
+                .then(response => {
+                    const articlesObj = response.data.articles
+                    // const bootstrap = articlesObj.bootstrap
+                
+                    for(let subject in articlesObj){
+                    
+                        articlesObj[subject].forEach(article => {
+                            // console.log(article)
+                            cardContainter.appendChild(cardMaker(article))
+                        });
+                    }
+                    // const newDiv = cardMaker(bootstrap[0])
+                    // cardContainter.appendChild(newDiv)
+                })
+                .catch(error => console.log(error))
+
+
+        }else{
+            let tabName = tab.textContent;
+            Axios.get('https://lambda-times-api.herokuapp.com/articles')
+                .then(response => {
+                    const articlesObj = response.data.articles[tabName]
+                    // const bootstrap = articlesObj.bootstrap
+                    articlesObj.forEach(article => {
+                        // console.log(article)
+                        cardContainter.appendChild(cardMaker(article))
+                    });
+                        
+                    }
+                    // const newDiv = cardMaker(bootstrap[0])
+                    // cardContainter.appendChild(newDiv)
+                )
+                .catch(error => console.log(error))
+            
+        }
+        tab.style.backgroundColor = 'white';
+        tab.style.color = 'black'
+    })
+    return tab
+}
 
 function cardMaker(cardObj){
     // createElements
@@ -77,6 +124,6 @@ function cardMaker(cardObj){
 
 
     // return the div
-    console.log(card)
+    // console.log(card)
     return card
 }
