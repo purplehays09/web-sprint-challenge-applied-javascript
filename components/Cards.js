@@ -68,6 +68,23 @@ function topicMaker(title){
                 .catch(error => console.log(error))
 
 
+        }else if (tab.textContent === 'node.js'){
+            let tabName = 'node'
+            Axios.get('https://lambda-times-api.herokuapp.com/articles')
+                .then(response => {
+                    const articlesObj = response.data.articles[tabName]
+                    // const bootstrap = articlesObj.bootstrap
+                    articlesObj.forEach(article => {
+                        // console.log(article)
+                        cardContainter.appendChild(cardMaker(article))
+                    });
+                        
+                    }
+                    // const newDiv = cardMaker(bootstrap[0])
+                    // cardContainter.appendChild(newDiv)
+                )
+                .catch(error => console.log(error))
+            
         }else{
             let tabName = tab.textContent;
             Axios.get('https://lambda-times-api.herokuapp.com/articles')
